@@ -1,0 +1,72 @@
+apps.csv (список приложений для сбора отзывов) <-────────────────────────────────────────────────────────────┐
+ │																																|
+ ▼																|
+01_collect_reviews.py (Google Play Scraper: сбор и очистка)									|
+ └─ reviews.csv																													|
+ │																																|
+ ▼																|
+02_generate_embeddings.py (OpenAI Embeddings API: преобразует отзывы в многомерные векторы для поиска похожих смыслов в отзывах)|						
+ └─ embeddings.pkl																												|
+ │																																|
+ ▼																|
+03_cluster_reviews.py (Python KMeans: группирует отзывы по смысловой близости)						        |
+ └─ clusters.csv																									Забираем компании для обработки
+ │																													по порядку, собираем отзывы
+ ▼															        |
+05_cluster_naming.py (GPT: преобразует кластеры отзывов в понятные бизнес-темы) -->──────────────────────────────────┘
+ └─ cluster_names.csv
+ │
+ ▼
+06_merge_companies.py (Python Pandas: объединяет темы всех компаний в единый VOC слой: Platform/Company/AppName/ClusterID/ClusterName/Sentiment/Reviews/AvgRating/Description)
+ └─ voc_all_companies.csv  ──────────────────┐
+ │                                                 ▼
+ ▼                                                                 
+07_topic_grouping.py (OpenAI Embeddings + Agglomerative Clustering: объединяет похожие ClusterName разных компаний в общие MetaCluster: ClusterName/Description/MetaClusterID)                                 
+ └─ topic_clusters.csv  ─────────────────────┐  
+ │                                                  ▼
+ ▼                                                   
+08_topic_naming.py (GPT: присваивает название каждому MetaCluster: MetaClusterID/MetaTopic)                        
+ └─ topic_mapping.csv  ──────────────────────┐  
+ │                                                  ▼
+ ▼                                                
+ 9_topic_consolidation.py (GPT: объединяет похожие MetaTopic в бизнес-категории meta_topic/business_topic)        
+ └─ business_topic_mapping.csv  ───────────────┐    
+ │                                                  ▼
+ ▼                                                    
+10_apply_business_topics.py     
+│
+├─ JOIN clusters.csv + cluster_names.csv
+│      по SourceFolder / Company / AppName / ClusterID
+│
+├─ JOIN ClusterName
+│      → topic_clusters.csv
+│      → MetaClusterID
+│
+├─ JOIN MetaClusterID
+│      → topic_mapping.csv
+│      → MetaTopic
+│
+└─ JOIN MetaTopic
+→ business_topic_mapping.csv
+→ BusinessTopic
+│
+▼
+OUTPUT:
+output/voc_business_topics.csv
+
+Финальная таблица:
+ReviewID
+Date
+YearMonth
+Platform
+Company
+AppName
+Language
+Rating
+Sentiment
+Review
+ClusterID
+ClusterName
+MetaClusterID
+MetaTopic
+BusinessTopic
