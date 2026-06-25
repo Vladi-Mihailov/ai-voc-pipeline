@@ -3,15 +3,38 @@
 import pandas as pd
 import config
 from pathlib import Path
-
-
+from utils import (
+    ensure_standard_columns,
+    get_processing_folders
+)
 # ==========================================
 # SETTINGS
 # ==========================================
 
+OUTPUT_FILE = config.VOC_BUSINESS_TOPICS_FILE
+
 output_dir = Path("output")
 
-OUTPUT_FILE = config.VOC_BUSINESS_TOPICS_FILE
+all_clusters = []
+all_cluster_names = []
+
+# ==========================================
+# SELECT INPUT FOLDERS
+# ==========================================
+
+if config.INPUT_MODE == "CSV":
+
+    folders = [
+        Path(config.APP_FOLDER)
+    ]
+
+else:
+
+    folders = [
+        f
+        for f in output_dir.iterdir()
+        if f.is_dir()
+    ]
 
 # ==========================================
 # LOAD COMPANY FILES
@@ -20,10 +43,7 @@ OUTPUT_FILE = config.VOC_BUSINESS_TOPICS_FILE
 all_clusters = []
 all_cluster_names = []
 
-for company_dir in output_dir.iterdir():
-
-    if not company_dir.is_dir():
-        continue
+for company_dir in folders:
 
     clusters_file = company_dir / "clusters.csv"
     names_file = company_dir / "cluster_names.csv"
@@ -35,7 +55,15 @@ for company_dir in output_dir.iterdir():
 
         all_clusters.append(df)
 
-        print(f"Loaded clusters: {clusters_file} | rows: {len(df)}")
+        print(
+            f"Loaded clusters: {clusters_file} | rows: {len(df)}"
+        )
+
+    else:
+
+        print(
+            f"WARNING: {clusters_file} not found"
+        )
 
     if names_file.exists():
 
@@ -44,11 +72,31 @@ for company_dir in output_dir.iterdir():
 
         all_cluster_names.append(df)
 
-        print(f"Loaded cluster_names: {names_file} | rows: {len(df)}")
+        print(
+            f"Loaded cluster_names: {names_file} | rows: {len(df)}"
+        )
+
+    else:
+
+        print(
+            f"WARNING: {names_file} not found"
+        )
 
 # ==========================================
 # CONCAT
 # ==========================================
+
+if not all_clusters:
+
+    raise FileNotFoundError(
+        "No clusters.csv files found."
+    )
+
+if not all_cluster_names:
+
+    raise FileNotFoundError(
+        "No cluster_names.csv files found."
+    )
 
 clusters = pd.concat(
     all_clusters,
@@ -59,22 +107,6 @@ cluster_names = pd.concat(
     all_cluster_names,
     ignore_index=True
 )
-
-print("\n==============================")
-print("INPUT CHECK")
-print("==============================")
-
-print("Clusters rows:")
-print(len(clusters))
-
-print("Cluster names rows:")
-print(len(cluster_names))
-
-print("\nClusters columns:")
-print(clusters.columns.tolist())
-
-print("\nCluster names columns:")
-print(cluster_names.columns.tolist())
 
 # ==========================================
 # CLEAN CLUSTERS
@@ -152,6 +184,8 @@ voc = clusters.merge(
     ],
     how="left"
 )
+
+voc = ensure_standard_columns(voc)
 
 rows_after = len(voc)
 
@@ -511,6 +545,7 @@ columns = [
     "Rating",
     "Sentiment",
     "Review",
+    "Review_EN",
     "ClusterID",
     "ClusterName",
     "MetaClusterID",

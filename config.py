@@ -6,6 +6,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ==========================================
+# INPUT SOURCE
+# ==========================================
+
+#INPUT_MODE = "PLAYSTORE"
+INPUT_MODE = "CSV"
+INPUT_CSV_FILE = "input_reviews.csv"
+
+# ==========================================
 # OPENAI
 # ==========================================
 
@@ -56,9 +64,15 @@ APP_ID = current_app["AppID"]
 #)
 
 
-LANGUAGE = current_app["Language"]
-COUNTRY = current_app["Country"]
+# ==========================================
+# TRANSLATION
+# ==========================================
 
+TRANSLATE_REVIEWS = False
+
+LANGUAGE = current_app["Language"]
+
+COUNTRY = current_app["Country"]
 
 # ==========================================
 # PLATFORMS
@@ -73,10 +87,19 @@ PLATFORM_IOS = "iOS"
 
 OUTPUT_DIR = "output"
 
-APP_FOLDER = os.path.join(
-    OUTPUT_DIR,
-    APP_ID.replace(".", "_")
-)
+if INPUT_MODE == "CSV":
+
+    APP_FOLDER = os.path.join(
+        "output",
+        "csv_input"
+    )
+
+else:
+
+    APP_FOLDER = os.path.join(
+        "output",
+        APP_ID.replace(".", "_")
+    )
 
 # ==========================================
 # GLOBAL VOC FILES

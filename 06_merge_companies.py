@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import config
+from utils import ensure_standard_columns
 
 all_data = []
 
@@ -23,7 +24,7 @@ for folder in os.listdir(config.OUTPUT_DIR):
         continue
 
     df = pd.read_csv(file_path)
-
+    df = ensure_standard_columns(df)
     all_data.append(df)
 
 # ==========================================

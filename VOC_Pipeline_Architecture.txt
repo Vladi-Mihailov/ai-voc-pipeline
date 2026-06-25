@@ -9,7 +9,7 @@ apps.csv (список приложений для сбора отзывов) <-
  └─ embeddings.pkl																												|
  │																																|
  ▼																|
-03_cluster_reviews.py (Python KMeans: группирует отзывы по смысловой близости)						        |
+03_cluster_reviews.py (Python KMeans: группирует отзывы по смысловой близости)						                            |
  └─ clusters.csv																									Забираем компании для обработки
  │																													по порядку, собираем отзывы
  ▼															        |
@@ -19,19 +19,19 @@ apps.csv (список приложений для сбора отзывов) <-
  ▼
 06_merge_companies.py (Python Pandas: объединяет темы всех компаний в единый VOC слой: Platform/Company/AppName/ClusterID/ClusterName/Sentiment/Reviews/AvgRating/Description)
  └─ voc_all_companies.csv  ──────────────────┐
- │                                                 ▼
+ │                                           ▼
  ▼                                                                 
 07_topic_grouping.py (OpenAI Embeddings + Agglomerative Clustering: объединяет похожие ClusterName разных компаний в общие MetaCluster: ClusterName/Description/MetaClusterID)                                 
  └─ topic_clusters.csv  ─────────────────────┐  
- │                                                  ▼
+ │                                           ▼
  ▼                                                   
 08_topic_naming.py (GPT: присваивает название каждому MetaCluster: MetaClusterID/MetaTopic)                        
  └─ topic_mapping.csv  ──────────────────────┐  
- │                                                  ▼
+ │                                           ▼
  ▼                                                
  9_topic_consolidation.py (GPT: объединяет похожие MetaTopic в бизнес-категории meta_topic/business_topic)        
  └─ business_topic_mapping.csv  ───────────────┐    
- │                                                  ▼
+ │                                             ▼
  ▼                                                    
 10_apply_business_topics.py     
 │
