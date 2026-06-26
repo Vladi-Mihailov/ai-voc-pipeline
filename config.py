@@ -11,8 +11,8 @@ load_dotenv()
 
 #INPUT_MODE = "PLAYSTORE"
 INPUT_MODE = "CSV"
-INPUT_CSV_FILE = "input_reviews.csv"
-
+#INPUT_FILE = "input_reviews"
+INPUT_FOLDER = "input_revie"
 # ==========================================
 # OPENAI
 # ==========================================

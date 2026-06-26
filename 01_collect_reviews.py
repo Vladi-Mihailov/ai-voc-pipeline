@@ -155,9 +155,7 @@ def load_custom_csv_reviews():
 
     print("Loading CSV reviews...")
 
-    reviews_for_ai = load_csv_reviews(
-        config.INPUT_CSV_FILE
-    )
+    reviews_for_ai = load_csv_reviews()
 
     reviews_for_ai = ensure_standard_columns(
         reviews_for_ai
